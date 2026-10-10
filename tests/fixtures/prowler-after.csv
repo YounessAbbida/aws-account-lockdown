@@ -1,0 +1,8 @@
+AUTH_METHOD;TIMESTAMP;ACCOUNT_UID;CHECK_ID;STATUS;MUTED;SEVERITY;RESOURCE_UID;REGION
+profile;2026-01-02 00:00:00;123456789012;iam_root_mfa_enabled;PASS;False;critical;arn:aws:iam::123456789012:root;global
+profile;2026-01-02 00:00:00;123456789012;iam_no_root_access_key;PASS;False;critical;arn:aws:iam::123456789012:root;global
+profile;2026-01-02 00:00:00;123456789012;cloudtrail_multi_region_enabled;PASS;False;high;arn:aws:cloudtrail:eu-west-3:123456789012:trail;eu-west-3
+profile;2026-01-02 00:00:00;123456789012;guardduty_is_enabled;PASS;False;medium;arn:aws:guardduty:eu-west-3:123456789012:detector;eu-west-3
+profile;2026-01-02 00:00:00;123456789012;s3_account_level_public_access_blocks;PASS;False;high;123456789012;eu-west-3
+profile;2026-01-02 00:00:00;123456789012;iam_password_policy_minimum_length_14;PASS;False;medium;123456789012;eu-west-3
+profile;2026-01-02 00:00:00;123456789012;iam_user_mfa_enabled_console_access;FAIL;False;high;arn:aws:iam::123456789012:user/bob;global

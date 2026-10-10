@@ -1,0 +1,7 @@
+# Copy to terraform.tfvars (gitignored) and fill in.
+aws_region   = "eu-west-3"
+alert_email  = "security@example.com"
+budget_email = "billing@example.com"
+
+# budget_limit_usd   = 50
+# log_retention_days = 365

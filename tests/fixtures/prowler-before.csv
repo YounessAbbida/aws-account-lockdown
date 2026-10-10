@@ -1,0 +1,8 @@
+AUTH_METHOD;TIMESTAMP;ACCOUNT_UID;CHECK_ID;STATUS;MUTED;SEVERITY;RESOURCE_UID;REGION
+profile;2026-01-01 00:00:00;123456789012;iam_root_mfa_enabled;FAIL;False;critical;arn:aws:iam::123456789012:root;global
+profile;2026-01-01 00:00:00;123456789012;iam_no_root_access_key;FAIL;False;critical;arn:aws:iam::123456789012:root;global
+profile;2026-01-01 00:00:00;123456789012;cloudtrail_multi_region_enabled;FAIL;False;high;arn:aws:cloudtrail:eu-west-3:123456789012:trail;eu-west-3
+profile;2026-01-01 00:00:00;123456789012;guardduty_is_enabled;FAIL;False;medium;arn:aws:guardduty:eu-west-3:123456789012:detector;eu-west-3
+profile;2026-01-01 00:00:00;123456789012;s3_account_level_public_access_blocks;FAIL;False;high;123456789012;eu-west-3
+profile;2026-01-01 00:00:00;123456789012;iam_password_policy_minimum_length_14;PASS;False;medium;123456789012;eu-west-3
+profile;2026-01-01 00:00:00;123456789012;ec2_instance_imdsv2_enabled;FAIL;True;high;arn:aws:ec2:eu-west-3:123456789012:instance/i-0example;eu-west-3
