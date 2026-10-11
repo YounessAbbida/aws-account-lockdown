@@ -22,3 +22,8 @@ output "guardduty_detector_id" {
   description = "GuardDuty detector in the home region."
   value       = aws_guardduty_detector.this.id
 }
+
+output "mfa_required_group" {
+  description = "Add human IAM users to this group to enforce MFA."
+  value       = aws_iam_group.mfa_required.name
+}

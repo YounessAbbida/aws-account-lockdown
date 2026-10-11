@@ -59,8 +59,13 @@ Then:
 1. Confirm the SNS subscription email ("AWS Notification - Subscription
    Confirmation"); no alert is delivered until you do.
 2. Fix what `access-key-audit.sh` reported: delete unused keys, rotate old ones,
-   enforce MFA for console users, and move workloads to IAM roles.
-3. Wait 24 hours for Config and Security Hub to evaluate every control.
+   and move workloads to IAM roles.
+3. Add every human IAM user to the `mfa_required_group` output group. Users
+   without MFA can then only set up their MFA device.
+4. Review IAM Access Analyzer unused-access findings (console: IAM → Access
+   Analyzer → Unused access) and remove what is not needed. Record changes in a
+   copy of [iam-report-template.md](iam-report-template.md).
+5. Wait 24 hours for Config and Security Hub to evaluate every control.
 
 ## 5. Re-scan and report
 

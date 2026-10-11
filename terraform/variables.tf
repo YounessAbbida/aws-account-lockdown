@@ -59,3 +59,9 @@ variable "guardduty_alert_min_severity" {
   type        = number
   default     = 7
 }
+
+variable "unused_access_days" {
+  description = "IAM Access Analyzer reports roles, users, keys and permissions unused for this many days."
+  type        = number
+  default     = 90
+}

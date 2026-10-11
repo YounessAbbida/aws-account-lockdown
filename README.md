@@ -45,7 +45,33 @@ findings is not a fix.
 | AWS Config | Records all resources, needed by Security Hub controls | `detection.tf` |
 | Security alerts | CIS metric filters and alarms on CloudTrail; GuardDuty severity >= 7; encrypted SNS topic | `alerts.tf` |
 | Budget alerts | 50% and 80% actual, 100% forecasted | `budget.tf` |
-| Extras at no cost | EBS encryption by default, CIS password policy, IAM Access Analyzer | `account_baseline.tf` |
+| Extras at no cost | EBS encryption by default, CIS password policy, IAM Access Analyzer (external access) | `account_baseline.tf` |
+
+## IAM clean-up
+
+Identity is where most small-account findings are, so it has its own track:
+
+| Piece | What it gives | Where |
+|---|---|---|
+| Credential report audit | Every user: MFA, password use, each key's age and last use, with findings (root keys, no MFA, old or unused keys) | [`scripts/access-key-audit.sh`](scripts/access-key-audit.sh) |
+| IAM Access Analyzer, unused access | Roles, users, keys and permissions unused for 90 days (configurable) | `terraform/iam.tf` |
+| MFA enforcement policy | Group `<project>-mfa-required`: members can only set up their own MFA until they sign in with it | `terraform/iam.tf` |
+| Before/after IAM report | **Template** to record what was removed and why | [docs/iam-report-template.md](docs/iam-report-template.md) |
+
+## Maps to SOC 2 areas
+
+Which technical controls in this repository support which SOC 2 Common
+Criteria areas. This is a mapping of AWS configuration only: it is not an
+audit, does not make an account SOC 2 compliant, and covers no policies,
+procedures or evidence collection.
+
+| SOC 2 area | Technical controls here |
+|---|---|
+| CC6.1 logical access | Root MFA and root-key checks, MFA enforcement policy, CIS password policy, S3 account public access block, KMS encryption of logs |
+| CC6.2 / CC6.3 provisioning and removal of access | Access-key audit, unused-credential and key-rotation Config rules, IAM Access Analyzer unused access, IAM report template |
+| CC6.6 access from outside the boundary | IAM Access Analyzer external access, S3 public access block, Security Hub controls |
+| CC7.2 monitoring for anomalies | CloudTrail (multi-region, validated), GuardDuty, CIS metric-filter alarms, Security Hub, AWS Config |
+| CC7.3 evaluating security events | Alerts routed to an owned email via encrypted SNS; GuardDuty severity threshold |
 
 ## Architecture
 
@@ -77,9 +103,9 @@ flowchart LR
 
 1. **Baseline scan** with Prowler and the access-key audit ([docs/prowler.md](docs/prowler.md)).
 2. **Root account** steps by hand ([docs/root-account.md](docs/root-account.md)).
-3. **Apply** the Terraform baseline and fix IAM users and keys ([docs/RUNBOOK.md](docs/RUNBOOK.md)).
+3. **Apply** the Terraform baseline, add human users to the MFA group, and clean up IAM users, keys and unused access ([docs/RUNBOOK.md](docs/RUNBOOK.md)).
 4. **Re-scan** after 24 hours and compare with [`scripts/prowler_compare.py`](scripts/prowler_compare.py).
-5. **Report** using the [before/after template](docs/report-template.md).
+5. **Report** using the [before/after template](docs/report-template.md) and the [IAM report template](docs/iam-report-template.md).
 
 Real scan output names resources and account IDs, so `prowler-output/` is
 gitignored and filled-in reports stay with the client.
@@ -111,6 +137,7 @@ and IAM Identity Center instead of IAM users.
 ```
 terraform/
   account_baseline.tf   S3 account public access block, EBS default encryption, password policy, Access Analyzer
+  iam.tf                unused-access analyzer, MFA enforcement policy and group
   cloudtrail.tf         multi-region trail, CloudWatch log group and delivery role
   log_bucket.tf         log bucket and its policy
   kms.tf                security key and key policy
@@ -125,6 +152,7 @@ docs/
   prowler.md            Prowler install, scan, re-scan, compare
   root-account.md       manual root hardening
   report-template.md    TEMPLATE for the client report
+  iam-report-template.md TEMPLATE for the IAM before/after report
 tests/                  unit tests on synthetic fixtures
 ```
 
@@ -134,7 +162,9 @@ Estimated at **$5 to $20 per month for a small account** if applied, mostly
 AWS Config, Security Hub and GuardDuty, which scale with the number of
 resources and events. GuardDuty and Security Hub include a 30-day free trial
 that shows the real projected cost in their consoles. The first CloudTrail
-management trail is free; the KMS key is $1 per month.
+management trail is free; the KMS key is $1 per month. The IAM Access
+Analyzer unused-access analyzer is billed per IAM role and user analyzed each
+month; check current pricing for your number of identities.
 
 ## License
 
